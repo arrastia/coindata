@@ -1,0 +1,11 @@
+{
+  "all": "/coins",
+  "list": "/coins/list",
+  "markets": "/coins/markets",
+  "coinById": "/coins/{:coinId}",
+  "coinTickers": "/coins/{:coinId}/tickers",
+  "coinHistory": "/coins/{:coinId}/history",
+  "coinMarketChart": "/coins/{:coinId}/market_chart",
+  "coinMarketChartRange": "/coins/{:coinId}/market_chart/range",
+  "coinStatusUpdates": "/coins/{:coinId}/status_updates"
+}
