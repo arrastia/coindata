@@ -1,0 +1,84 @@
+.p-checkbox {
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 0.25em;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+.p-checkbox .p-checkbox-box {
+  width: 1.125em;
+  height: 1.125em;
+  line-height: 1.125em;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.p-checkbox .p-checkbox-icon {
+  display: block;
+}
+
+.p-checkbox-label {
+  vertical-align: middle;
+}
+
+.p-checkbox + label {
+  vertical-align: middle;
+}
+
+/* REPOR */
+
+body .p-checkbox {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  width: 20px;
+  height: 20px;
+}
+body .p-checkbox .p-checkbox-box {
+  border: 1px solid #a6a6a6;
+  background-color: #ffffff;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -o-transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -webkit-transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+body .p-checkbox .p-checkbox-box:not(.p-disabled):hover {
+  border-color: #212121;
+}
+body .p-checkbox .p-checkbox-box:not(.p-disabled).p-focus {
+  outline: 0 none;
+  outline-offset: 0;
+  -webkit-box-shadow: 0 0 0 0.2em #004494;
+  -moz-box-shadow: 0 0 0 0.2em #004494;
+  box-shadow: 0 0 0 0.2em #004494;
+  border-color: #004494;
+}
+body .p-checkbox .p-checkbox-box.p-highlight {
+  border-color: #004494;
+  background-color: #004494;
+  color: #ffffff;
+}
+body .p-checkbox .p-checkbox-box.p-highlight:not(.p-disabled):hover {
+  border-color: #005b9f;
+  background-color: #005b9f;
+  color: #ffffff;
+}
+body .p-checkbox .p-checkbox-box .p-checkbox-icon {
+  overflow: hidden;
+  position: relative;
+  font-size: 18px;
+}
+body .p-checkbox-label {
+  margin: 0 0 0 0.5em;
+}
