@@ -56,11 +56,11 @@ export const MultiSelect = ({
   const panelRef = useRef(null);
   const selectRef = useRef(null);
 
+  useOnClickOutside(containerRef, () => hide());
+
   useEffect(() => {
     checkValidity();
   }, [selectRef.current]);
-
-  useOnClickOutside(containerRef, () => hide());
 
   const alignPanel = () => {
     if (appendTo) {
