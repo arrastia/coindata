@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
 import classNames from 'classnames';
@@ -10,9 +10,7 @@ import { InputTextUtils } from './.tools/Utils/InputTextUtils';
 import DomHandler from 'interfaces/views/.tools/Utils/DomHandler';
 import ObjectUtils from 'interfaces/views/.tools/Utils/ObjectUtils';
 
-export const InputText = ({ keyfilter, onInput, onKeyPress, validateOnly, ...rest }) => {
-  const inputRef = useRef(null);
-
+export const InputText = forwardRef(({ keyfilter, onInput, onKeyPress, validateOnly, ...rest }, ref) => {
   const onPressKey = event => {
     if (onKeyPress) onKeyPress(event);
     if (keyfilter) InputTextUtils.onKeyPress(event, keyfilter, validateOnly);
@@ -37,8 +35,8 @@ export const InputText = ({ keyfilter, onInput, onKeyPress, validateOnly, ...res
 
   let inputProps = ObjectUtils.findDiffKeys(rest, InputText.defaultProps);
 
-  return <input ref={inputRef} {...inputProps} className={classNameList} onInput={onInputClick} onKeyPress={onPressKey} />;
-};
+  return <input ref={ref} {...inputProps} className={classNameList} onInput={onInputClick} onKeyPress={onPressKey} />;
+});
 
 InputText.propTypes = {
   keyfilter: PropTypes.any,
