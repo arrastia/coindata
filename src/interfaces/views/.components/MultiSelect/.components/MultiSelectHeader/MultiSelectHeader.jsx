@@ -9,12 +9,7 @@ import { InputText } from 'interfaces/views/.components/InputText';
 
 export const MultiSelectHeader = ({ allChecked, filter, filterPlaceholder, filterValue, onClose, onFilter, onToggleAll }) => {
   const filterData = event => {
-    if (onFilter) {
-      onFilter({
-        originalEvent: event,
-        query: event.target.value
-      });
-    }
+    if (onFilter) onFilter({ originalEvent: event, query: event.target.value });
   };
 
   const renderFilterElement = () => {
@@ -38,12 +33,7 @@ export const MultiSelectHeader = ({ allChecked, filter, filterPlaceholder, filte
   };
 
   const toggleAll = event => {
-    if (onToggleAll) {
-      onToggleAll({
-        originalEvent: event,
-        checked: allChecked
-      });
-    }
+    if (onToggleAll) onToggleAll({ originalEvent: event, checked: allChecked });
   };
 
   let filterElement = renderFilterElement();

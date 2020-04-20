@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import classNames from 'classnames';
@@ -52,15 +52,15 @@ export const MultiSelect = ({
   const [filterState, setFilterState] = useState('');
 
   const containerRef = useRef(null);
-  const panelRef = useRef(null);
   const inputRef = useRef(null);
+  const panelRef = useRef(null);
   const selectRef = useRef(null);
-
-  useOnClickOutside(containerRef, () => hide());
 
   useEffect(() => {
     checkValidity();
   }, [selectRef.current]);
+
+  useOnClickOutside(containerRef, () => hide());
 
   const alignPanel = () => {
     if (appendTo) {
@@ -71,57 +71,12 @@ export const MultiSelect = ({
     }
   };
 
-  const checkValidity = () => {
-    return selectRef.current.checkValidity();
-  };
-
-  const isPanelClicked = event => {
-    return panelRef.current && panelRef.current.element && panelRef.current.element.contains(event.target);
-  };
-
-  const hasFilter = () => {
-    return filterState && filterState.trim().length > 0;
-  };
-
-  const isAllChecked = visibleOptions => {
-    if (hasFilter()) return value && visibleOptions && visibleOptions.length && value.length === visibleOptions.length;
-    else return value && options && value.length === options.length;
-  };
-
-  const isEmpty = () => {
-    return !value || value.length === 0;
-  };
-
-  const findSelectionIndex = values => {
-    let index = -1;
-
-    if (value) {
-      for (let i = 0; i < value.length; i++) {
-        if (ObjectUtils.equals(value[i], values, dataKey)) {
-          index = i;
-          break;
-        }
-      }
-    }
-    return index;
-  };
-
-  const isSelected = option => {
-    return findSelectionIndex(getOptionValue(option)) !== -1;
-  };
+  const checkValidity = () => selectRef.current.checkValidity();
 
   const filterOptions = options => {
     let filterValue = filterState.trim().toLocaleLowerCase(filterLocale);
     let searchFields = filterBy ? filterBy.split(',') : [optionLabel || 'label'];
     return FilterUtils.filter(options, searchFields, filterValue, filterMatchMode, filterLocale);
-  };
-
-  const getOptionValue = option => {
-    return optionValue ? ObjectUtils.resolveFieldData(option, optionValue) : option['value'] !== undefined ? option['value'] : option;
-  };
-
-  const getOptionLabel = option => {
-    return optionLabel ? ObjectUtils.resolveFieldData(option, optionLabel) : option['label'] !== undefined ? option['label'] : option;
   };
 
   const findLabelByValue = val => {
@@ -140,13 +95,32 @@ export const MultiSelect = ({
     return label;
   };
 
-  const getSelectedItemsLabel = () => {
-    let pattern = /{(.*?)}/;
-    if (pattern.test(selectedItemsLabel)) {
-      return selectedItemsLabel.replace(selectedItemsLabel.match(pattern)[0], value.length + '');
-    }
+  const findNextItem = item => {
+    let nextItem = item.nextElementSibling;
 
-    return selectedItemsLabel;
+    if (nextItem) return !DomHandler.hasClass(nextItem, 'p-multiselect-item') ? findNextItem(nextItem) : nextItem;
+    else return null;
+  };
+
+  const findPrevItem = item => {
+    let prevItem = item.previousElementSibling;
+
+    if (prevItem) return !DomHandler.hasClass(prevItem, 'p-multiselect-item') ? findPrevItem(prevItem) : prevItem;
+    else return null;
+  };
+
+  const findSelectionIndex = values => {
+    let index = -1;
+
+    if (value) {
+      for (let i = 0; i < value.length; i++) {
+        if (ObjectUtils.equals(value[i], values, dataKey)) {
+          index = i;
+          break;
+        }
+      }
+    }
+    return index;
   };
 
   const getLabel = () => {
@@ -175,51 +149,30 @@ export const MultiSelect = ({
     if (selectedItemTemplate) {
       if (!isEmpty()) {
         if (value.length <= maxSelectedLabels) {
-          return value.map((val, index) => {
-            return <React.Fragment key={index}>{selectedItemTemplate(val)}</React.Fragment>;
-          });
-        } else {
-          return getSelectedItemsLabel();
-        }
-      } else {
-        return selectedItemTemplate();
-      }
-    } else {
-      return getLabel();
-    }
+          return value.map((val, index) => <Fragment key={index}>{selectedItemTemplate(val)}</Fragment>);
+        } else return getSelectedItemsLabel();
+      } else return selectedItemTemplate();
+    } else return getLabel();
   };
 
-  const updateModel = (event, value) => {
-    if (onChange) {
-      onChange({
-        originalEvent: event,
-        value: value,
-        stopPropagation: () => {},
-        preventDefault: () => {},
-        target: {
-          name: name,
-          id: id,
-          value: value
-        }
-      });
-    }
+  const getOptionLabel = option => {
+    return optionLabel ? ObjectUtils.resolveFieldData(option, optionLabel) : option['label'] !== undefined ? option['label'] : option;
   };
 
-  const onFocusEvent = event => {
-    DomHandler.addClass(containerRef.current, 'p-focus');
-
-    if (onFocus) {
-      onFocus(event);
-    }
+  const getOptionValue = option => {
+    return optionValue ? ObjectUtils.resolveFieldData(option, optionValue) : option['value'] !== undefined ? option['value'] : option;
   };
 
-  const onBlurEvent = event => {
-    DomHandler.removeClass(containerRef.current, 'p-focus');
-
-    if (onBlur) {
-      onBlur(event);
+  const getSelectedItemsLabel = () => {
+    let pattern = /{(.*?)}/;
+    if (pattern.test(selectedItemsLabel)) {
+      return selectedItemsLabel.replace(selectedItemsLabel.match(pattern)[0], value.length + '');
     }
+
+    return selectedItemsLabel;
   };
+
+  const hasFilter = () => filterState && filterState.trim().length > 0;
 
   const hide = () => {
     DomHandler.addClass(panelRef.current.element, 'p-input-overlay-hidden');
@@ -231,41 +184,29 @@ export const MultiSelect = ({
     }, 150);
   };
 
-  const show = () => {
-    if (options && options.length) {
-      panelRef.current.element.style.zIndex = String(DomHandler.generateZIndex());
-      panelRef.current.element.style.display = 'block';
-
-      setTimeout(() => {
-        DomHandler.addClass(panelRef.current.element, 'p-input-overlay-visible');
-        DomHandler.removeClass(panelRef.current.element, 'p-input-overlay-hidden');
-      }, 1);
-
-      alignPanel();
-    }
+  const isAllChecked = visibleOptions => {
+    if (hasFilter()) return value && visibleOptions && visibleOptions.length && value.length === visibleOptions.length;
+    else return value && options && value.length === options.length;
   };
 
-  const findNextItem = item => {
-    let nextItem = item.nextElementSibling;
+  const isEmpty = () => !value || value.length === 0;
 
-    if (nextItem) return !DomHandler.hasClass(nextItem, 'p-multiselect-item') ? findNextItem(nextItem) : nextItem;
-    else return null;
-  };
+  const isPanelClicked = event => panelRef.current && panelRef.current.element && panelRef.current.element.contains(event.target);
 
-  const findPrevItem = item => {
-    let prevItem = item.previousElementSibling;
+  const isSelected = option => findSelectionIndex(getOptionValue(option)) !== -1;
 
-    if (prevItem) return !DomHandler.hasClass(prevItem, 'p-multiselect-item') ? findPrevItem(prevItem) : prevItem;
-    else return null;
+  const onBlurEvent = event => {
+    DomHandler.removeClass(containerRef.current, 'p-focus');
+
+    if (onBlur) onBlur(event);
   };
 
   const onClick = event => {
     if (disabled) return;
 
     if (!isPanelClicked(event)) {
-      if (panelRef.current.element.offsetParent) {
-        hide();
-      } else {
+      if (panelRef.current.element.offsetParent) hide();
+      else {
         inputRef.current.focus();
         show();
       }
@@ -278,8 +219,12 @@ export const MultiSelect = ({
     event.stopPropagation();
   };
 
-  const onFilter = event => {
-    setFilterState(event.query);
+  const onFilter = event => setFilterState(event.query);
+
+  const onFocusEvent = event => {
+    DomHandler.addClass(containerRef.current, 'p-focus');
+
+    if (onFocus) onFocus(event);
   };
 
   const onOptionClick = event => {
@@ -331,9 +276,8 @@ export const MultiSelect = ({
   const onToggleAll = event => {
     let newValue;
 
-    if (event.checked) {
-      newValue = [];
-    } else {
+    if (event.checked) newValue = [];
+    else {
       let optionList = hasFilter() ? filterOptions(options) : options;
       if (optionList) {
         newValue = [];
@@ -344,6 +288,32 @@ export const MultiSelect = ({
     }
 
     updateModel(event.originalEvent, newValue);
+  };
+
+  const renderHeader = items => (
+    <MultiSelectHeader
+      filter={filter}
+      filterValue={filterState}
+      onFilter={onFilter}
+      filterPlaceholder={filterPlaceholder}
+      onClose={onCloseClick}
+      onToggleAll={onToggleAll}
+      allChecked={isAllChecked(items)}
+    />
+  );
+
+  const renderHiddenSelect = () => {
+    let selectedOptions = value
+      ? value.map((option, index) => <option key={getOptionLabel(option) + '_' + index} selected value={getOptionValue(option)}></option>)
+      : null;
+
+    return (
+      <div className="p-hidden-accessible p-multiselect-hidden-select">
+        <select ref={selectRef} required={required} name={name} tabIndex="-1" aria-hidden="true" multiple>
+          {selectedOptions}
+        </select>
+      </div>
+    );
   };
 
   const renderLabel = () => {
@@ -361,45 +331,39 @@ export const MultiSelect = ({
     );
   };
 
-  const renderHiddenSelect = () => {
-    let selectedOptions = value
-      ? value.map((option, index) => <option key={getOptionLabel(option) + '_' + index} selected value={getOptionValue(option)}></option>)
-      : null;
+  const show = () => {
+    if (options && options.length) {
+      panelRef.current.element.style.zIndex = String(DomHandler.generateZIndex());
+      panelRef.current.element.style.display = 'block';
 
-    return (
-      <div className="p-hidden-accessible p-multiselect-hidden-select">
-        <select ref={selectRef} required={required} name={name} tabIndex="-1" aria-hidden="true" multiple>
-          {selectedOptions}
-        </select>
-      </div>
-    );
+      setTimeout(() => {
+        DomHandler.addClass(panelRef.current.element, 'p-input-overlay-visible');
+        DomHandler.removeClass(panelRef.current.element, 'p-input-overlay-hidden');
+      }, 1);
+
+      alignPanel();
+    }
   };
 
-  const renderHeader = items => {
-    return (
-      <MultiSelectHeader
-        filter={filter}
-        filterValue={filterState}
-        onFilter={onFilter}
-        filterPlaceholder={filterPlaceholder}
-        onClose={onCloseClick}
-        onToggleAll={onToggleAll}
-        allChecked={isAllChecked(items)}
-      />
-    );
+  const updateModel = (event, value) => {
+    if (onChange) {
+      onChange({
+        originalEvent: event,
+        value: value,
+        stopPropagation: () => {},
+        preventDefault: () => {},
+        target: { name: name, id: id, value: value }
+      });
+    }
   };
 
-  let classNameList = classNames('p-multiselect p-component', className, {
-    'p-disabled': disabled
-  });
+  let classNameList = classNames('p-multiselect p-component', className, { 'p-disabled': disabled });
   let label = renderLabel();
   let hiddenSelect = renderHiddenSelect();
   let items = options;
 
   if (items) {
-    if (hasFilter()) {
-      items = filterOptions(items);
-    }
+    if (hasFilter()) items = filterOptions(items);
 
     items = items.map((option, index) => {
       let optionLabel = getOptionLabel(option);
