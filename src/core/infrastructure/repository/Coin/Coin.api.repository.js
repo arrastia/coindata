@@ -10,6 +10,11 @@ const all = async () => {
   return parseCoinList(coinDTO);
 };
 
+const list = async () => {
+  const coinListDTO = await apiCoin.list();
+  return parseCoinList(coinListDTO);
+};
+
 const parseCoin = coinDTO =>
   new Coin({
     blockTime: coinDTO.block_time_in_minutes,
@@ -31,4 +36,4 @@ const parseCoinList = coinListDTO => {
   return;
 };
 
-export const ApiCoinRepository = { all };
+export const ApiCoinRepository = { all, list };

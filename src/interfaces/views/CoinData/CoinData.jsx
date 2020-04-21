@@ -29,6 +29,7 @@ export const CoinData = () => {
 
   useEffect(() => {
     onLoadCoins();
+    onLoadList();
     setTimeout(() => {
       onQuitSpinner();
     }, 2000);
@@ -41,6 +42,13 @@ export const CoinData = () => {
     } catch (error) {
       console.log('error', error);
     }
+  };
+
+  const onLoadList = async () => {
+    try {
+      const list = await CoinService.list();
+      console.log('list', list);
+    } catch (error) {}
   };
 
   const onQuitSpinner = () => setSpinner(false);

@@ -11,5 +11,13 @@ export const apiCoin = {
       queryString: {}
     });
     return response.data;
+  },
+
+  list: async () => {
+    const response = await HTTPRequester.get({
+      url: getURL(CoinWeb.list),
+      queryString: {}
+    });
+    return response.data;
   }
 };
