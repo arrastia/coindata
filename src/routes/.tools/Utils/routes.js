@@ -2,7 +2,7 @@ export const routes = {
   ACCESS_POINT: '/',
   CODELISTS: '/codelists',
   COIN_DATA: '/',
-  DASHBOARDS: '/dataflow/:dataflowId/dashboards',
+  COIN: '/coin',
   DATA_COLLECTION: '/dataflow/:dataflowId/dataCollection/:datasetId',
   DATAFLOW: '/dataflow/:dataflowId',
   DATAFLOWS: '/dataflows',
